@@ -1,6 +1,7 @@
 import requests
 import json
-from env import env 
+import re 
+from env import env  
 
 class Weather_Service():
     
@@ -8,7 +9,7 @@ class Weather_Service():
         weather_message = self._get_12h_weather()
 
         payload = {
-            "username": "Weather Bot",
+            "username": "竹塘鄉天氣 - Alex",
             "content": weather_message
         }
 
@@ -28,13 +29,25 @@ class Weather_Service():
         
         startTime = resp_message["startTime"]
         endTime = resp_message["endTime"]
-        weatherDescription = resp_message["elementValue"][0]["value"]
+        weatherDescription = resp_message["elementValue"][0]["value"].split("。")
 
-        weather_message = f'{startTime} 到 {endTime} 的天氣狀況為：{weatherDescription}'
+        weather_message = f"竹塘鄉 12 小時天氣預報\n" + \
+            f"```\n" + \
+            f"時間：{startTime} ~ {endTime}：\n" + \
+            f"天氣狀況：{weatherDescription[0]}\n" + \
+            f"氣溫變化：{self._trans_temperature(weatherDescription[2])}\n" + \
+            f"降雨機率：{weatherDescription[1]}\n" + \
+            f"體感溫度：{weatherDescription[3]}\n" + \
+            f"```"
 
         return weather_message
 
-if __name__ == "__main__":
-    weather = Weather_Service()
-    weather.push_to_discord_channel()
+    def _trans_temperature(self, temp):
+        temp_num = re.findall(r"\d+\.?\d*", temp)
+        new_temp = f"{temp_num[0]}°C ~ {temp_num[1]}°C"
+        return new_temp
+
+# if __name__ == "__main__":
+#     weather = Weather_Service()
+#     weather._get_12h_weather()
     
