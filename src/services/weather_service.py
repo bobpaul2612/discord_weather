@@ -16,7 +16,7 @@ class Weather_Service():
 
     def _get_12h_weather(self):
         payload = {
-            "Authorization": env.CWB_AUTHORIZATOIN,
+            "Authorization": env.CWB_AUTHORIZATION,
             "locationName": "竹塘鄉",
             "elementName": ["WeatherDescription"]
         }
